@@ -1,0 +1,23 @@
+services:
+  db:
+    image: "postgres:alpine"
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_PASSWORD=njVys55V4r2U
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+  app:
+    image: golang:alpine
+    environment:
+      - TOKEN=7602027535:AAGrPptEC__CbwGqT-6vFpc-SdnEBAAtiSY
+      - POSTGRES_PASSWORD=njVys55V4r2U
+      - DAEMON_HOST=FI177118
+      - DAEMON_PORT=5000
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    command: picovpn
+    working_dir: /code
+    entrypoint: /code/entrypoint.sh
