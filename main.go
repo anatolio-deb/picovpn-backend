@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/anatolio-deb/picovpnd"
+	picoDaemonClient "github.com/anatolio-deb/picovpnd"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"github.com/sirupsen/logrus"
@@ -56,7 +56,7 @@ func signupHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	attempts := 100
 	for attempts > 0 {
 		if update.Message != nil {
-			response := picovpnd.UserAdd(update.Message.From.Username, update.Message.Text)
+			response := picoDaemonClient.UserAdd(update.Message.From.Username, update.Message.Text)
 			if response.Code > 0 {
 				logrus.Debug(response.Error)
 				b.SendMessage(ctx, &bot.SendMessageParams{
