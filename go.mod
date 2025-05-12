@@ -3,7 +3,7 @@ module github.com/anatolio-deb/picovpn-backend
 go 1.23.8
 
 require (
-	github.com/anatolio-deb/picovpnd v0.0.0-20250512040325-27a35f1fa21e
+	github.com/anatolio-deb/picovpnd v0.0.0-20250512042333-d4154e62cf8d
 	github.com/go-telegram/bot v1.15.0
 	github.com/sirupsen/logrus v1.9.3
 	gorm.io/driver/postgres v1.5.11

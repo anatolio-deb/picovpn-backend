@@ -12,10 +12,6 @@ services:
     environment:
       - TOKEN=7602027535:AAGrPptEC__CbwGqT-6vFpc-SdnEBAAtiSY
       - POSTGRES_PASSWORD=njVys55V4r2U
-      - DAEMON_HOST=FI177118
-      - DAEMON_PORT=5000
-    ports:
-      - "5500:5000"
     volumes:
       - .:/code
     depends_on:
