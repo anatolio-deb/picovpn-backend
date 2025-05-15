@@ -64,7 +64,6 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			ParseMode: models.ParseModeMarkdown,
 		})
 	} else {
-
 		passwd, err := password.Generate(8, 4, 0, true, true)
 		if err != nil {
 			logrus.Error(err)
@@ -125,7 +124,6 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				})
 			}
 		}
-
 	}
 
 }
