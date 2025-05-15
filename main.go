@@ -31,20 +31,21 @@ func main() {
 		panic(err)
 	}
 
-	b.RegisterHandler(bot.HandlerTypeMessageText, "start", bot.MatchTypeCommand, startHandler)
-	b.RegisterHandlerMatchFunc(matchFunc, helloHandler)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "trial", bot.MatchTypeCommand, trialHandler)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "buy", bot.MatchTypeCommand, buyHandler)
+	// b.RegisterHandlerMatchFunc(matchFunc, helloHandler)
 
 	b.Start(ctx)
 }
 
-func matchFunc(update *models.Update) bool {
-	if update.Message == nil {
-		return false
-	}
-	return update.Message.Text == "hello"
-}
+// func matchFunc(update *models.Update) bool {
+// 	if update.Message == nil {
+// 		return false
+// 	}
+// 	return update.Message.Text == "hello"
+// }
 
-func helloHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	log.Printf("hello handler")
 }
 
@@ -52,7 +53,7 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	log.Printf("default handler")
 }
 
-func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func trialHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	_, err := UserGetByTelegramID(update.Message.From.ID)
 	if err == nil {
 		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
@@ -123,12 +124,12 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID: update.Message.Chat.ID,
 					Text: fmt.Sprintf(
-						`Free Trial is activated for your account.
+						`Free Trial is activated for your account\\.
 							Use Cisco AnyConnect apps to connect to the VPN:
-							1. Google Play: https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&hl=en
-							2. AppStore: https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB
+							- [Google Play] (https://play\\.google\\.com/store/apps/details?id=com\\.cisco\\.anyconnect\\.vpn\\.android\\.avf&hl=en)
+							- [AppStore] (https://apps\\.apple\\.com/ru/app/cisco-secure-client/id1135064690?l=en-GB)
 
-							- Server Address: picovpn.ru
+							- Server Address: picovpn\\.ru
 							- Username: %s
 							- Password: ||%s||
 							`, update.Message.From.Username, update.Message.Text,
