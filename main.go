@@ -55,6 +55,7 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	user, err := UserGetByTelegramID(update.Message.From.ID)
 	if err != nil {
+		logrus.Error(err)
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
 			Text:      "Multiple accounts are not allowed",
@@ -64,7 +65,7 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	}
 	passwd, err := password.Generate(8, 4, 0, true, true)
 	if err != nil {
-		logrus.Debug(err)
+		logrus.Error(err)
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
 			Text:      "Что-то пошло не так...",
@@ -74,7 +75,7 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	response := daemon.UserAdd(update.Message.From.Username, passwd)
 	if response.Code > 0 {
-		logrus.Debug(response.Error)
+		logrus.Error(response.Error)
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
 			Text:      "Что-то пошло не так...",
@@ -105,7 +106,7 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				ParseMode: models.ParseModeMarkdown,
 			})
 		} else {
-			logrus.Debugf("created new user ID %d", user.ID)
+			logrus.Infof("created new user ID %d", user.ID)
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID: update.Message.Chat.ID,
 				Text: fmt.Sprintf(
