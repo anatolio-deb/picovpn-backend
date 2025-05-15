@@ -8,9 +8,10 @@ import (
 
 type User struct {
 	gorm.Model
-	TelegramID int64
-	PlanID     uint
-	Plan       UserPlan
+	TelegramID   int64
+	PlanID       uint
+	Plan         UserPlan
+	EmailAddress string
 }
 
 type PlanType int
@@ -32,7 +33,8 @@ const (
 
 type UserPlan struct {
 	gorm.Model
-	Type PlanType
+	Type     PlanType
+	IsActive bool
 }
 
 func (u UserPlan) IsExpired() bool {
