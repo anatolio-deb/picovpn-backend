@@ -53,17 +53,15 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 }
 
 func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	user, err := UserGetByTelegramID(update.Message.From.ID)
-	if err != nil {
-		logrus.Error(err)
-	}
-	if user != nil {
+	_, err := UserGetByTelegramID(update.Message.From.ID)
+	if err == nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
 			Text:      "Multiple accounts are not allowed",
 			ParseMode: models.ParseModeMarkdown,
 		})
 	} else {
+		logrus.Error(err)
 		passwd, err := password.Generate(8, 4, 0, true, true)
 		if err != nil {
 			logrus.Error(err)
@@ -92,7 +90,7 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					ParseMode: models.ParseModeMarkdown,
 				})
 			}
-			user = &User{
+			user := &User{
 				PlanID:     plan.ID,
 				Plan:       plan,
 				TelegramID: update.Message.From.ID,
