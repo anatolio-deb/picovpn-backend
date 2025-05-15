@@ -55,40 +55,52 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	_, err := UserGetByTelegramID(update.Message.From.ID)
 	if err == nil {
-		b.SendMessage(ctx, &bot.SendMessageParams{
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
 			Text:      "Multiple accounts are not allowed",
 			ParseMode: models.ParseModeMarkdown,
 		})
+		if err != nil {
+			logrus.Error(err)
+		}
 	} else {
 		logrus.Error(err)
 		passwd, err := password.Generate(8, 4, 0, true, true)
 		if err != nil {
 			logrus.Error(err)
-			b.SendMessage(ctx, &bot.SendMessageParams{
+			_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
 				Text:      "Что-то пошло не так...",
 				ParseMode: models.ParseModeMarkdown,
 			})
+			if err != nil {
+				logrus.Error(err)
+			}
 		}
 		response := daemon.UserAdd(update.Message.From.Username, passwd)
 		if response.Code > 0 {
 			logrus.Error(response.Error)
-			b.SendMessage(ctx, &bot.SendMessageParams{
+			_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
 				Text:      "Что-то пошло не так...",
 				ParseMode: models.ParseModeMarkdown,
 			})
+			if err != nil {
+				logrus.Error(err)
+			}
 		} else {
 			plan := UserPlan{Type: Monthly}
 			result := DB.Create(&plan)
 			if result.Error != nil {
 				logrus.Error(result.Error)
-				b.SendMessage(ctx, &bot.SendMessageParams{
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID:    update.Message.Chat.ID,
 					Text:      "Что-то пошло не так...",
 					ParseMode: models.ParseModeMarkdown,
 				})
+				if err != nil {
+					logrus.Error(result.Error)
+				}
 			}
 			user := &User{
 				PlanID:     plan.ID,
@@ -98,14 +110,17 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			result = DB.Create(&user)
 			if result.Error != nil {
 				logrus.Error(result.Error)
-				b.SendMessage(ctx, &bot.SendMessageParams{
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID:    update.Message.Chat.ID,
 					Text:      "Что-то пошло не так...",
 					ParseMode: models.ParseModeMarkdown,
 				})
+				if err != nil {
+					logrus.Error(err)
+				}
 			} else {
 				logrus.Infof("created new user ID %d", user.ID)
-				b.SendMessage(ctx, &bot.SendMessageParams{
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID: update.Message.Chat.ID,
 					Text: fmt.Sprintf(
 						`Free Trial is activated for your account.
@@ -120,6 +135,9 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					),
 					ParseMode: models.ParseModeMarkdown,
 				})
+				if err != nil {
+					logrus.Error(err)
+				}
 			}
 		}
 	}
