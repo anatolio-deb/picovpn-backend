@@ -5,6 +5,7 @@ go 1.23.8
 require (
 	github.com/anatolio-deb/picovpnd v0.0.0-20250512044827-6adc3aab6bf5
 	github.com/go-telegram/bot v1.15.0
+	github.com/sethvargo/go-password v0.3.1
 	github.com/sirupsen/logrus v1.9.3
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.26.1
@@ -17,14 +18,9 @@ require (
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/nyaruka/phonenumbers v1.6.1 // indirect
-	github.com/sendgrid/rest v2.6.9+incompatible // indirect
-	github.com/sendgrid/sendgrid-go v3.16.0+incompatible // indirect
-	github.com/sethvargo/go-password v0.3.1 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
-	google.golang.org/protobuf v1.36.5 // indirect
 )
