@@ -31,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	b.RegisterHandler(bot.HandlerTypeMessageText, "trial", bot.MatchTypeCommand, trialHandler)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "try", bot.MatchTypeCommand, tryHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "buy", bot.MatchTypeCommand, buyHandler)
 	// b.RegisterHandlerMatchFunc(matchFunc, helloHandler)
 
@@ -53,7 +53,7 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	log.Printf("default handler")
 }
 
-func trialHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	_, err := UserGetByTelegramID(update.Message.From.ID)
 	if err == nil {
 		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
