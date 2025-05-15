@@ -62,55 +62,54 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		})
 		return
 	}
-	if update.Message != nil {
-		passwd, err := password.Generate(8, 4, 0, true, true)
-		if err != nil {
-			logrus.Debug(err)
+	passwd, err := password.Generate(8, 4, 0, true, true)
+	if err != nil {
+		logrus.Debug(err)
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:    update.Message.Chat.ID,
+			Text:      "Что-то пошло не так...",
+			ParseMode: models.ParseModeMarkdown,
+		})
+	}
+
+	response := daemon.UserAdd(update.Message.From.Username, passwd)
+	if response.Code > 0 {
+		logrus.Debug(response.Error)
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:    update.Message.Chat.ID,
+			Text:      "Что-то пошло не так...",
+			ParseMode: models.ParseModeMarkdown,
+		})
+	} else {
+		plan := UserPlan{Type: Monthly}
+		result := DB.Create(&plan)
+		if plan.ID == 0 {
+			logrus.Error(result.Error)
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
 				Text:      "Что-то пошло не так...",
 				ParseMode: models.ParseModeMarkdown,
 			})
 		}
-
-		response := daemon.UserAdd(update.Message.From.Username, passwd)
-		if response.Code > 0 {
-			logrus.Debug(response.Error)
+		user = &User{
+			PlanID:     plan.ID,
+			Plan:       plan,
+			TelegramID: update.Message.From.ID,
+		}
+		result = DB.Create(&user)
+		if user.ID == 0 {
+			logrus.Error(result.Error)
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
 				Text:      "Что-то пошло не так...",
 				ParseMode: models.ParseModeMarkdown,
 			})
 		} else {
-			plan := UserPlan{Type: Monthly}
-			result := DB.Create(&plan)
-			if plan.ID == 0 {
-				logrus.Error(result.Error)
-				b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID:    update.Message.Chat.ID,
-					Text:      "Что-то пошло не так...",
-					ParseMode: models.ParseModeMarkdown,
-				})
-			}
-			user = &User{
-				PlanID:     plan.ID,
-				Plan:       plan,
-				TelegramID: update.Message.From.ID,
-			}
-			result = DB.Create(&user)
-			if user.ID == 0 {
-				logrus.Error(result.Error)
-				b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID:    update.Message.Chat.ID,
-					Text:      "Что-то пошло не так...",
-					ParseMode: models.ParseModeMarkdown,
-				})
-			} else {
-				logrus.Debugf("created new user ID %d", user.ID)
-				b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID: update.Message.Chat.ID,
-					Text: fmt.Sprintf(
-						`Free Trial is activated for your account.
+			logrus.Debugf("created new user ID %d", user.ID)
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text: fmt.Sprintf(
+					`Free Trial is activated for your account.
 							Use Cisco AnyConnect apps to connect to the VPN:
 							1. Google Play: https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&hl=en
 							2. AppStore: https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB
@@ -119,10 +118,10 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 							- Username: %s
 							- Password: ||%s||
 							`, update.Message.From.Username, update.Message.Text,
-					),
-					ParseMode: models.ParseModeMarkdown,
-				})
-			}
+				),
+				ParseMode: models.ParseModeMarkdown,
+			})
 		}
 	}
+
 }
