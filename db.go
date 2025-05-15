@@ -29,7 +29,7 @@ func init() {
 }
 
 func UserGetByTelegramID(id int64) (*User, error) {
-	user := User{}
+	var user *User
 	result := DB.First(&user, "telegram_id = ?", id)
-	return &user, result.Error
+	return user, result.Error
 }
