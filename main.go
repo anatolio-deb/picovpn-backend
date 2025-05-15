@@ -53,8 +53,8 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 }
 
 func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	user := UserGetByTelegramID(update.Message.From.ID)
-	if user != nil {
+	user, err := UserGetByTelegramID(update.Message.From.ID)
+	if err != nil {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
 			Text:      "Multiple accounts are not allowed",
@@ -83,7 +83,7 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	} else {
 		plan := UserPlan{Type: Monthly}
 		result := DB.Create(&plan)
-		if plan.ID == 0 {
+		if result.Error != nil {
 			logrus.Error(result.Error)
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
@@ -97,7 +97,7 @@ func startHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			TelegramID: update.Message.From.ID,
 		}
 		result = DB.Create(&user)
-		if user.ID == 0 {
+		if result.Error != nil {
 			logrus.Error(result.Error)
 			b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,

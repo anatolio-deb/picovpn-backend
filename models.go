@@ -8,10 +8,9 @@ import (
 
 type User struct {
 	gorm.Model
-	TelegramID   int64
-	PlanID       uint
-	Plan         UserPlan
-	EmailAddress string
+	TelegramID int64
+	PlanID     uint
+	Plan       UserPlan
 }
 
 type PlanType int
