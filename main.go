@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	daemon "github.com/anatolio-deb/picovpnd"
 	"github.com/go-telegram/bot"
@@ -94,21 +95,8 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					logrus.Error(err)
 				}
 			} else {
-				plan := UserPlan{Type: Monthly}
+				plan := UserPlan{Type: Monthly, ExpiresAt: time.Now().AddDate(0, 1, 0)}
 				result := DB.Create(&plan)
-				if result.Error != nil {
-					logrus.Error(result.Error)
-					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID:    update.Message.Chat.ID,
-						Text:      "Что-то пошло не так...",
-						ParseMode: models.ParseModeMarkdown,
-					})
-					if err != nil {
-						logrus.Error(result.Error)
-					}
-				}
-				plan.ExpiresAt = plan.CreatedAt.AddDate(0, 1, 0)
-				result = DB.Update("expires_at", plan.ExpiresAt)
 				if result.Error != nil {
 					logrus.Error(result.Error)
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
