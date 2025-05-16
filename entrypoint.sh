@@ -6,6 +6,7 @@ while ! nc -z db 5432; do
 done
 
 # build
+mkdir -p /etc/letsencrypt/live/picovpn.ru/
 go build -o /usr/bin/picovpn
 
 # proceed to docker command

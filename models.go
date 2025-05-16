@@ -35,7 +35,7 @@ type UserPlan struct {
 }
 
 // func (u UserPlan) IsExpired() bool {
-// 	return time.Now().After(u.CreatedAt)
+// 	return time.Now().After(u.UpdatedAt)
 // }
 
 // func (u UserPlanBase)SetExpiresAt(){
