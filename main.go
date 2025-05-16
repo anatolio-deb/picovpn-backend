@@ -9,6 +9,7 @@ import (
 	"time"
 
 	daemon "github.com/anatolio-deb/picovpnd"
+	"github.com/anatolio-deb/picovpnd/common"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"github.com/sethvargo/go-password/password"
@@ -79,7 +80,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				logrus.Error(err)
 			}
 		}
-		daemonClient, err := daemon.New("TCP", "picovpn.ru")
+		daemonClient, err := daemon.New(common.ListenAddress)
 		if err != nil {
 			logrus.Error(err)
 		} else {

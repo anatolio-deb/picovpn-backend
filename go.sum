@@ -14,6 +14,8 @@ github.com/anatolio-deb/picovpnd v0.0.0-20250516113902-b3a84cce8b6c h1:w3wXqgopN
 github.com/anatolio-deb/picovpnd v0.0.0-20250516113902-b3a84cce8b6c/go.mod h1:vZGWlhMQi/mVQdvHGAjgxZTa1GMWt4Yq4N+ZfBvHnhI=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516114857-150a86efd96e h1:Q1dcuPHM4NsY43RPGYZ9DKC3jq6XnKBM69KQqDD4o/g=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516114857-150a86efd96e/go.mod h1:vZGWlhMQi/mVQdvHGAjgxZTa1GMWt4Yq4N+ZfBvHnhI=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516120947-da60dfdebeb7 h1:3doOfgFdTFsH6NiajsZ9ghXFcEoUrz8GV+yya4xCo/g=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516120947-da60dfdebeb7/go.mod h1:vZGWlhMQi/mVQdvHGAjgxZTa1GMWt4Yq4N+ZfBvHnhI=
 github.com/creack/pty v1.1.17 h1:QeVUsEDNrLBW4tMgZHvxy18sKtr6VI492kBhUfhDJNI=
 github.com/creack/pty v1.1.17/go.mod h1:MOBLtS5ELjhRRrroQr9kyvTxUAFNvYEK993ew/Vr4O4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
