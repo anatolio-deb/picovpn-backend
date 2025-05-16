@@ -1,3 +1,5 @@
+github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
+github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
 github.com/anatolio-deb/picovpnd v0.0.0-20250512044827-6adc3aab6bf5 h1:HdrWOEr5RcgtWCPDxgxme/wObA2/Q0Jhi8RVT3lZZlg=
 github.com/anatolio-deb/picovpnd v0.0.0-20250512044827-6adc3aab6bf5/go.mod h1:LIYNVH6vQv1m3LT1letMFUaAsD2AZmueFhtX+UM1YyU=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516072630-bae5a11f82cb h1:8HKLM/AOk+xMM5ixdx8MaPpQlA0uaO3mFBnx9zj2gZI=
@@ -8,6 +10,10 @@ github.com/anatolio-deb/picovpnd v0.0.0-20250516090850-b03854fe5547 h1:/rd1dGBPH
 github.com/anatolio-deb/picovpnd v0.0.0-20250516090850-b03854fe5547/go.mod h1:91NjSadt6rvJ1C7wHloOR1I2nfU//W8/5J6hIz1BCAM=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516092626-cbb9712b7d1d h1:8IzFbqs4q88HxxO8Y/9W75vickq1VA3fXw4VCgovNfw=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516092626-cbb9712b7d1d/go.mod h1:91NjSadt6rvJ1C7wHloOR1I2nfU//W8/5J6hIz1BCAM=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516113902-b3a84cce8b6c h1:w3wXqgopNIAX4i5BZdQt2K+cgY+0da0Vcua8+xUzPtg=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516113902-b3a84cce8b6c/go.mod h1:vZGWlhMQi/mVQdvHGAjgxZTa1GMWt4Yq4N+ZfBvHnhI=
+github.com/creack/pty v1.1.17 h1:QeVUsEDNrLBW4tMgZHvxy18sKtr6VI492kBhUfhDJNI=
+github.com/creack/pty v1.1.17/go.mod h1:MOBLtS5ELjhRRrroQr9kyvTxUAFNvYEK993ew/Vr4O4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -33,6 +39,7 @@ github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ
 github.com/sirupsen/logrus v1.9.3/go.mod h1:naHLuLoDiP4jHNo9R0sCBMtWGeIprob74mVsIT4qYEQ=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=

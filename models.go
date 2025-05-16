@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -30,19 +32,7 @@ const (
 
 type UserPlan struct {
 	gorm.Model
-	Type     PlanType
-	IsActive bool
+	Type      PlanType
+	IsActive  bool
+	ExpiresAt time.Time
 }
-
-// func (u UserPlan) IsExpired() bool {
-// 	return time.Now().After(u.UpdatedAt)
-// }
-
-// func (u UserPlanBase)SetExpiresAt(){
-// 	switch u.Type {
-// 	case Monthly:
-// 		u.expiresAt = time.Now().AddDate(0,1,0)
-// 	case Yearly:
-// 		u.expiresAt = time.Now().AddDate(1,0,0)
-// 	}
-// }

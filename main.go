@@ -107,6 +107,19 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						logrus.Error(result.Error)
 					}
 				}
+				plan.ExpiresAt = plan.CreatedAt.AddDate(0, 1, 0)
+				result = DB.Update("expires_at", plan.ExpiresAt)
+				if result.Error != nil {
+					logrus.Error(result.Error)
+					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+						ChatID:    update.Message.Chat.ID,
+						Text:      "Что-то пошло не так...",
+						ParseMode: models.ParseModeMarkdown,
+					})
+					if err != nil {
+						logrus.Error(result.Error)
+					}
+				}
 				user := &User{
 					PlanID:     plan.ID,
 					Plan:       plan,
@@ -147,7 +160,5 @@ Use Cisco AnyConnect app to connect to the VPN:
 				}
 			}
 		}
-
 	}
-
 }
