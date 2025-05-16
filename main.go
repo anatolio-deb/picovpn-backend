@@ -85,6 +85,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			logrus.Error(err)
 		} else {
 			response := daemonClient.UserAdd(update.Message.From.Username, passwd)
+			logrus.Error(response.Code, response.Error)
 			if response.Code > 0 {
 				logrus.Error(response.Error)
 				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
