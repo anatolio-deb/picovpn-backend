@@ -126,15 +126,12 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					Text: fmt.Sprintf(
 						`Free Trial is activated for your account!
 Use Cisco AnyConnect apps to connect to the VPN:
-<ul>
-<li><a href="https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&amp;hl=en">Google Play</a></li>
-<li><a href="https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB">AppStore</a></li>
-</ul>
-<ul>
-<li>Server Address: picovpn.ru</li>
-<li>Username: %s</li>
-<li>Password: %s</li>
-</ul>
+<a href="https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&amp;hl=en">Google Play</a></li>
+<a href="https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB">AppStore</a></li>
+
+- Server Address: picovpn.ru
+- Username: %s
+- Password: %s
 
 `, update.Message.From.Username, update.Message.Text,
 					),
