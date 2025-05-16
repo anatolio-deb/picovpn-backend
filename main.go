@@ -124,16 +124,21 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID: update.Message.Chat.ID,
 					Text: fmt.Sprintf(
-						`\# Free Trial is activated for your account
-\#\# Use Cisco AnyConnect apps to connect to the VPN
-- [Google Play] (https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&hl=en)
-- [AppStore] (https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB)
+						`<p>Free Trial is activated for your account!</p>
+<p>Use Cisco AnyConnect apps to connect to the VPN:</p>
+<ul>
+<li><a href="https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&amp;hl=en">Google Play</a></li>
+<li><a href="https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB">AppStore</a></li>
+</ul>
+<ul>
+<li>Server Address: picovpn.ru</li>
+<li>Username: %s</li>
+<li>Password: %s</li>
+</ul>
 
-- Server Address: picovpn\.ru
-- Username: %s
-- Password: ||%s||`, update.Message.From.Username, update.Message.Text,
+`, update.Message.From.Username, update.Message.Text,
 					),
-					ParseMode: models.ParseModeMarkdown,
+					ParseMode: models.ParseModeHTML,
 				})
 				if err != nil {
 					logrus.Error(err)
