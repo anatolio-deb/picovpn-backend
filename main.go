@@ -131,9 +131,9 @@ Use Cisco AnyConnect apps to connect to the VPN:
 
 - Server Address: picovpn.ru
 - Username: %s
-- Password: %s
+- Password: ||%s||
 
-`, update.Message.From.Username, update.Message.Text,
+`, update.Message.From.Username, passwd,
 					),
 					ParseMode: models.ParseModeHTML,
 				})
