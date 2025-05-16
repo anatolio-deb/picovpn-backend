@@ -2,6 +2,10 @@ github.com/anatolio-deb/picovpnd v0.0.0-20250512044827-6adc3aab6bf5 h1:HdrWOEr5R
 github.com/anatolio-deb/picovpnd v0.0.0-20250512044827-6adc3aab6bf5/go.mod h1:LIYNVH6vQv1m3LT1letMFUaAsD2AZmueFhtX+UM1YyU=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516072630-bae5a11f82cb h1:8HKLM/AOk+xMM5ixdx8MaPpQlA0uaO3mFBnx9zj2gZI=
 github.com/anatolio-deb/picovpnd v0.0.0-20250516072630-bae5a11f82cb/go.mod h1:91NjSadt6rvJ1C7wHloOR1I2nfU//W8/5J6hIz1BCAM=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516085603-6ad53c4ca655 h1:ANmMCoAwWmOpzQ/aTBdnPsoDOTf1JFbrWRnP7ydXDFw=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516085603-6ad53c4ca655/go.mod h1:91NjSadt6rvJ1C7wHloOR1I2nfU//W8/5J6hIz1BCAM=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516090850-b03854fe5547 h1:/rd1dGBPH/WFASemO2/oIVMJYRIW0TggyCht7p9XFWs=
+github.com/anatolio-deb/picovpnd v0.0.0-20250516090850-b03854fe5547/go.mod h1:91NjSadt6rvJ1C7wHloOR1I2nfU//W8/5J6hIz1BCAM=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -30,6 +34,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+github.com/tredoe/crypt v1.0.3 h1:GJ4cf/Mof301X2mjXi4JtpNF25+lrbQSvRSzg2RwgQA=
+github.com/tredoe/crypt v1.0.3/go.mod h1:We7nlvfwI+61RpUORmkhKv1bthmjYlCrDJXaFxWqXsM=
 golang.org/x/crypto v0.17.0 h1:r8bRNjWL3GshPW3gkd+RpvzWrZAwPS49OmTGZ/uhM4k=
 golang.org/x/crypto v0.17.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
 golang.org/x/sync v0.12.0 h1:MHc5BpPuC30uJk597Ri8TV3CNZcTLu6B6z4lJy+g6Jw=

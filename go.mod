@@ -3,7 +3,7 @@ module github.com/anatolio-deb/picovpn-backend
 go 1.23.8
 
 require (
-	github.com/anatolio-deb/picovpnd v0.0.0-20250516072630-bae5a11f82cb
+	github.com/anatolio-deb/picovpnd v0.0.0-20250516090850-b03854fe5547
 	github.com/go-telegram/bot v1.15.0
 	github.com/sethvargo/go-password v0.3.1
 	github.com/sirupsen/logrus v1.9.3
@@ -19,6 +19,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
+	github.com/tredoe/crypt v1.0.3 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
