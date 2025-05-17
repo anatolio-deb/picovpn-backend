@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -32,4 +33,10 @@ func UserGetByTelegramID(id int64) (*User, error) {
 	var user *User
 	result := DB.First(&user, "telegram_id = ?", id)
 	return user, result.Error
+}
+
+func PlansGetExpired() ([]UserPlan, error) {
+	plans := make([]UserPlan, 0)
+	result := DB.Where("expires_at >= ?", time.Now()).Find(&plans)
+	return plans, result.Error
 }

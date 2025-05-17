@@ -36,6 +36,7 @@ func main() {
 	b.RegisterHandler(bot.HandlerTypeMessageText, "try", bot.MatchTypeCommand, tryHandler)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "buy", bot.MatchTypeCommand, buyHandler)
 	// b.RegisterHandlerMatchFunc(matchFunc, helloHandler)
+	go LockExpiredUsers(b)
 
 	b.Start(ctx)
 }
@@ -97,25 +98,14 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					logrus.Error(err)
 				}
 			} else {
-				plan := UserPlan{Type: Monthly, ExpiresAt: time.Now().AddDate(0, 1, 0)}
-				result := DB.Create(&plan)
-				if result.Error != nil {
-					logrus.Error(result.Error)
-					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID:    update.Message.Chat.ID,
-						Text:      "Something went wrong 😟",
-						ParseMode: models.ParseModeMarkdown,
-					})
-					if err != nil {
-						logrus.Error(result.Error)
-					}
-				}
-				user := &User{
-					PlanID:     plan.ID,
-					Plan:       plan,
+				user := User{
+					// PlanID:     plan.ID,
+					// Plan:       plan,
 					TelegramID: update.Message.From.ID,
+					ChatID:     update.Message.Chat.ID,
+					Name:       update.Message.From.Username,
 				}
-				result = DB.Create(&user)
+				result := DB.Create(&user)
 				if result.Error != nil {
 					logrus.Error(result.Error)
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
@@ -127,11 +117,29 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						logrus.Error(err)
 					}
 				} else {
-					logrus.Infof("created new user ID %d", user.ID)
-					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID: update.Message.Chat.ID,
-						Text: fmt.Sprintf(
-							`Free Trial is activated for your account 👀
+					plan := UserPlan{
+						Type:      Monthly,
+						ExpiresAt: time.Now().AddDate(0, 1, 0),
+						UserID:    user.ID,
+						User:      user,
+					}
+					result = DB.Create(&plan)
+					if result.Error != nil {
+						logrus.Error(result.Error)
+						_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+							ChatID:    update.Message.Chat.ID,
+							Text:      "Something went wrong 😟",
+							ParseMode: models.ParseModeMarkdown,
+						})
+						if err != nil {
+							logrus.Error(result.Error)
+						}
+					} else {
+						logrus.Infof("created new user ID %d", user.ID)
+						_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+							ChatID: update.Message.Chat.ID,
+							Text: fmt.Sprintf(
+								`Free Trial is activated for your account 👀
 Use Cisco AnyConnect app to connect to the VPN:
 - <a href="https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&amp;hl=en">Google Play</a>
 - <a href="https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB">AppStore</a>
@@ -141,11 +149,12 @@ Use Cisco AnyConnect app to connect to the VPN:
 - Password: %s
 
 `, update.Message.From.Username, passwd,
-						),
-						ParseMode: models.ParseModeHTML,
-					})
-					if err != nil {
-						logrus.Error(err)
+							),
+							ParseMode: models.ParseModeHTML,
+						})
+						if err != nil {
+							logrus.Error(err)
+						}
 					}
 				}
 			}
