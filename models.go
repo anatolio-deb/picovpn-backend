@@ -11,8 +11,9 @@ type User struct {
 	TelegramID int64
 	// PlanID     uint
 	// Plan       UserPlan
-	ChatID int64
-	Name   string
+	ChatID  int64
+	Name    string
+	Account string
 }
 
 type PlanType int
