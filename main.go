@@ -60,7 +60,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	if err == nil {
 		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:    update.Message.Chat.ID,
-			Text:      "Multiple accounts are not allowed",
+			Text:      "Multiple accounts are not allowed 🙇",
 			ParseMode: models.ParseModeMarkdown,
 		})
 		if err != nil {
@@ -73,7 +73,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			logrus.Error(err)
 			_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
-				Text:      "Что-то пошло не так...",
+				Text:      "Something went wrong 😟",
 				ParseMode: models.ParseModeMarkdown,
 			})
 			if err != nil {
@@ -90,7 +90,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				logrus.Error(response.Error)
 				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID:    update.Message.Chat.ID,
-					Text:      "Что-то пошло не так...",
+					Text:      "Something went wrong 😟",
 					ParseMode: models.ParseModeMarkdown,
 				})
 				if err != nil {
@@ -103,7 +103,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					logrus.Error(result.Error)
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID:    update.Message.Chat.ID,
-						Text:      "Что-то пошло не так...",
+						Text:      "Something went wrong 😟",
 						ParseMode: models.ParseModeMarkdown,
 					})
 					if err != nil {
@@ -120,7 +120,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					logrus.Error(result.Error)
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID:    update.Message.Chat.ID,
-						Text:      "Что-то пошло не так...",
+						Text:      "Something went wrong",
 						ParseMode: models.ParseModeMarkdown,
 					})
 					if err != nil {
@@ -131,7 +131,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID: update.Message.Chat.ID,
 						Text: fmt.Sprintf(
-							`Free Trial is activated for your account!
+							`Free Trial is activated for your account 👀
 Use Cisco AnyConnect app to connect to the VPN:
 - <a href="https://play.google.com/store/apps/details?id=com.cisco.anyconnect.vpn.android.avf&amp;hl=en">Google Play</a>
 - <a href="https://apps.apple.com/ru/app/cisco-secure-client/id1135064690?l=en-GB">AppStore</a>
