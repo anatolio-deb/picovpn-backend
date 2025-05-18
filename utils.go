@@ -35,6 +35,7 @@ func LockExpiredUsers(b *bot.Bot) {
 						logrus.Error(err)
 					}
 					for _, p := range plans {
+						logrus.Infof("Locking user %d", p.UserID)
 						resp := daemonClient.UserLock(p.User.Name)
 						if resp.Code > 0 {
 							logrus.Error(resp.Error)
