@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"time"
 
 	daemon "github.com/anatolio-deb/picovpnd"
@@ -135,103 +137,94 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 	// and we're handling it. Otherwise, Telegram might retry sending the update repetitively
 	// as it thinks the callback query doesn't reach to our application. learn more by
 	// reading the footnote of the https://core.telegram.org/bots/api#callbackquery type.
-	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
+	_, err := b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
 		CallbackQueryID: update.CallbackQuery.ID,
 		ShowAlert:       false,
 	})
-
-	user, err := UserGetByTelegramID(update.Message.From.ID)
 	if err != nil {
 		logrus.Error(err)
-	} else {
-		// useradd or get existing; set new expire date from amount
-		user, err := UserGetByTelegramID(user.TelegramID)
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:    update.Message.Chat.ID,
+			Text:      "Something went wrong 😟",
+			ParseMode: models.ParseModeMarkdown,
+		})
 		if err != nil {
 			logrus.Error(err)
+		}
+	} else {
+
+		callbackData := strings.Split(update.CallbackQuery.Data, ";")
+		if len(callbackData) < 1 {
+			logrus.Error("invalid callback data")
 			_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 				ChatID:    update.Message.Chat.ID,
-				Text:      "Use /link to connect your TON wallet",
+				Text:      "Something went wrong 😟",
 				ParseMode: models.ParseModeMarkdown,
 			})
 			if err != nil {
 				logrus.Error(err)
 			}
 		} else {
-			client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
+			// useradd or get existing; set new expire date from amount
+			userID, err := strconv.Atoi(callbackData[1])
 			if err != nil {
 				logrus.Error(err)
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID:    update.Message.Chat.ID,
+					Text:      "Something went wrong 😟",
+					ParseMode: models.ParseModeMarkdown,
+				})
+				if err != nil {
+					logrus.Error(err)
+				}
+			}
+			user, err := UserGetByTelegramID(int64(userID))
+			if err != nil {
+				logrus.Error(err)
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID:    update.Message.Chat.ID,
+					Text:      "Use /link to connect your TON wallet",
+					ParseMode: models.ParseModeMarkdown,
+				})
+				if err != nil {
+					logrus.Error(err)
+				}
 			} else {
-				addr, err := client.AddressParse(ctx, tonapi.AddressParseParams{
+				client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
+				if err != nil {
+					log.Fatal(err)
+				}
+				acc, err := client.GetAccount(ctx, tonapi.GetAccountParams{
 					AccountID: user.Wallet,
 				})
 				if err != nil {
 					logrus.Error(err)
-					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID:    update.Message.Chat.ID,
-						Text:      "Something went wrong 😟",
-						ParseMode: models.ParseModeMarkdown,
-					})
-					if err != nil {
-						logrus.Error(err)
-					}
+				} else {
+					acc.GetBalance()
 				}
 
-				result := DB.Model(&user).Update("wallet", addr.GetRawForm())
-				if result.Error != nil {
-					logrus.Error(result.Error)
-					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID:    update.Message.Chat.ID,
-						Text:      "Something went wrong 😟",
-						ParseMode: models.ParseModeMarkdown,
-					})
-					if err != nil {
-						logrus.Error(result.Error)
-					}
-				} else {
-					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID:    update.Message.Chat.ID,
-						Text:      "Wallet is linked ✅",
-						ParseMode: models.ParseModeMarkdown,
-					})
-					if err != nil {
-						logrus.Error(result.Error)
-					}
+				var amount string
+				switch callbackData[0] {
+				case "button_1":
+					amount = "3.0"
+				case "button_2":
+					amount = "36.0"
+				case "button_3":
+					amount = "108.0"
 				}
+
+				resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
+					"ADDRESS": {os.Getenv("TON_WALLET")},
+					"AMOUNT":  {amount}},
+					nil,
+				)
+				if err != nil {
+					logrus.Error(err)
+				}
+				logrus.Debugln(resp)
+
 			}
 		}
-
-		client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
-		if err != nil {
-			log.Fatal(err)
-		}
-		acc, err := client.GetAccount(ctx, tonapi.GetAccountParams{
-			AccountID: update.Message.Text,
-		})
-		if err != nil {
-			logrus.Error(err)
-		} else {
-			acc.GetBalance()
-		}
-
-		var amount string
-		switch update.CallbackQuery.Data {
-		case "button_1":
-			amount = "3.0"
-		case "button_2":
-			amount = "36.0"
-		case "button_3":
-			amount = "108.0"
-		}
-
-		resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
-			"ADDRESS": {os.Getenv("TON_WALLET")},
-			"AMOUNT":  {amount}},
-			nil,
-		)
-		if err != nil {
-			logrus.Error(err)
-		}
-		logrus.Debugln(resp)
 	}
 }
 
@@ -239,9 +232,9 @@ func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "Monthly", CallbackData: "button_1"},
-				{Text: "Half-year", CallbackData: "button_2"},
-				{Text: "Yearly", CallbackData: "button_3"},
+				{Text: "Monthly", CallbackData: fmt.Sprintf("button_1;%d", update.Message.From.ID)},
+				{Text: "Half-year", CallbackData: fmt.Sprintf("button_1;%d", update.Message.From.ID)},
+				{Text: "Yearly", CallbackData: fmt.Sprintf("button_1;%d", update.Message.From.ID)},
 			},
 		},
 	}
