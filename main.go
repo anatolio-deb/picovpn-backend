@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -18,6 +19,11 @@ import (
 	"github.com/sethvargo/go-password/password"
 	"github.com/sirupsen/logrus"
 	"github.com/tonkeeper/tonapi-go"
+	"github.com/xssnick/tonutils-go/address"
+	"github.com/xssnick/tonutils-go/liteclient"
+	"github.com/xssnick/tonutils-go/tlb"
+	"github.com/xssnick/tonutils-go/ton"
+	"github.com/xssnick/tonutils-go/ton/wallet"
 )
 
 // Send any text message to the bot after the bot has been started
@@ -190,39 +196,96 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 					logrus.Error(err)
 				}
 			} else {
-				client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
-				if err != nil {
-					log.Fatal(err)
-				}
-				acc, err := client.GetAccount(ctx, tonapi.GetAccountParams{
-					AccountID: user.Wallet,
-				})
+				// initialize connection pool.
+				testnetConfigURL := "https://ton-blockchain.github.io/testnet-global.config.json"
+				conn := liteclient.NewConnectionPool()
+				ctx := context.Background()
+				err := conn.AddConnectionsFromConfigUrl(ctx, testnetConfigURL)
 				if err != nil {
 					logrus.Error(err)
 				} else {
-					acc.GetBalance()
-				}
+					// initialize api client.
+					api := ton.NewAPIClient(conn)
 
-				var amount string
-				switch callbackData[0] {
-				case "button_1":
-					amount = "3.0"
-				case "button_2":
-					amount = "36.0"
-				case "button_3":
-					amount = "108.0"
-				}
+					// // importing wallet.
+					seedStr := user.Wallet // if you don't have one you can generate it with tonwallet.NewSeed().
+					seed := strings.Split(seedStr, " ")
 
-				resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
-					"ADDRESS": {os.Getenv("TON_WALLET")},
-					"AMOUNT":  {amount}},
-					nil,
-				)
-				if err != nil {
-					logrus.Error(err)
-				}
-				logrus.Debugln(resp)
+					w, err := wallet.FromSeed(api, seed, wallet.V4R2)
+					if err != nil {
+						logrus.Error(err)
+					} else {
+						log.Println("WALLET ADDRESS: ", w.Address().String())
 
+						// getting latest master chain.
+						block, err := api.CurrentMasterchainInfo(ctx)
+						if err != nil {
+							logrus.Error(err)
+						}
+
+						balance, err := w.GetBalance(ctx, block)
+						if err != nil {
+							logrus.Error(err)
+						} else {
+							log.Println("AVAILABLE BALANCE", balance)
+
+							var amount uint64
+							switch callbackData[0] {
+							case "button_1":
+								amount = TON * 3
+							case "button_2":
+								amount = TON * 3
+							case "button_3":
+								amount = TON * 108
+							}
+
+							// check if we have enough balance.
+							if balance.Nano().Uint64() < amount {
+								logrus.Error(errors.New("insufficient balance"))
+							} else {
+								// parse address, in case we receive an invalid address.
+								addr, err := address.ParseAddr(os.Getenv("TON_WALLET"))
+								if err != nil {
+									logrus.Error(err)
+								} else {
+									// Now we can use the method Transfer that the library provides.
+									// Which absolutely fine, the problem is that we WANT to retrieve the hash of the transaction.
+									// Currently the Transfer method doesn't not return the hash of the transaction, because it gives you
+									// the option to not wait for the transaction to finish. This is my assumption of course.
+									// So let's try to wait for the transaction and to retrieve the hash of the transaction.
+									// For that purpose the library provides us with a method called SendManyWaitTxHash.
+
+									// creating cell for comment.
+									// body, err := tonwallet.CreateCommentCell(comment)
+									// if err != nil {
+									// 	panic(err)
+									// }
+
+									txn, err := w.SendManyWaitTxHash(ctx, []*wallet.Message{
+										{
+											Mode: 1,
+											InternalMessage: &tlb.InternalMessage{
+												IHRDisabled: true,
+												Bounce:      false, // we don't want the transaction to bounce, but you can change it to true if you want.
+												DstAddr:     addr,  // destination address.
+												Amount:      tlb.FromNanoTONU(amount),
+												Body:        nil,
+											},
+										},
+									})
+									if err != nil {
+										logrus.Error(err)
+									} else {
+										// now we can use this transaction hash to search
+										// the transaction in tonscan explorer.
+										txnHash := base64.StdEncoding.EncodeToString(txn)
+										logrus.Info("TXN HASH: ", txnHash)
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
