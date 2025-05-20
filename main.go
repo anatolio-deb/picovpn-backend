@@ -140,44 +140,38 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 		ShowAlert:       false,
 	})
 
-	_, err := UserGetByTelegramID(update.Message.From.ID)
+	client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
 	if err != nil {
-		// TODO: useradd
+		log.Fatal(err)
+	}
+	acc, err := client.GetAccount(ctx, tonapi.GetAccountParams{
+		AccountID: update.Message.Text,
+	})
+	if err != nil {
 		logrus.Error(err)
 	} else {
-		client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
-		if err != nil {
-			log.Fatal(err)
-		}
-		acc, err := client.GetAccount(ctx, tonapi.GetAccountParams{
-			AccountID: update.Message.Text,
-		})
-		if err != nil {
-			logrus.Error(err)
-		} else {
-			acc.GetBalance()
-		}
-
-		var amount string
-		switch update.CallbackQuery.Data {
-		case "button_1":
-			amount = "3.0"
-		case "button_2":
-			amount = "36.0"
-		case "button_3":
-			amount = "108.0"
-		}
-
-		resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
-			"ADDRESS": {os.Getenv("TON_WALLET")},
-			"AMOUNT":  {amount}},
-			nil,
-		)
-		if err != nil {
-			logrus.Error(err)
-		}
-		logrus.Debugln(resp)
+		acc.GetBalance()
 	}
+
+	var amount string
+	switch update.CallbackQuery.Data {
+	case "button_1":
+		amount = "3.0"
+	case "button_2":
+		amount = "36.0"
+	case "button_3":
+		amount = "108.0"
+	}
+
+	resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
+		"ADDRESS": {os.Getenv("TON_WALLET")},
+		"AMOUNT":  {amount}},
+		nil,
+	)
+	if err != nil {
+		logrus.Error(err)
+	}
+	logrus.Debugln(resp)
 }
 
 func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
@@ -211,6 +205,14 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		})
 		if err != nil {
 			logrus.Error(err)
+			_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID:    update.Message.Chat.ID,
+				Text:      "Please, send me a vaild TON wallet 😟",
+				ParseMode: models.ParseModeMarkdown,
+			})
+			if err != nil {
+				logrus.Error(err)
+			}
 		} else {
 			user, err := UserGetByTelegramID(update.Message.From.ID)
 			if err != nil {
