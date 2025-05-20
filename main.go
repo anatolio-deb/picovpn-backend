@@ -170,11 +170,6 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 	}
 }
 
-// b.SendMessage(ctx, &bot.SendMessageParams{
-// 	ChatID: update.CallbackQuery.Message.Message.Chat.ID,
-// 	Text:   "You selected the button: " + update.CallbackQuery.Data,
-// })
-
 func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
@@ -197,8 +192,6 @@ func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 }
 
 func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	// addr, err := address.ParseAddr()
-
 	client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
 	if err != nil {
 		logrus.Error(err)
@@ -225,7 +218,6 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						logrus.Error(result.Error)
 					}
 				} else {
-					logrus.Error(result.Error)
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID:    update.Message.Chat.ID,
 						Text:      "Wallet is linked ✅",
