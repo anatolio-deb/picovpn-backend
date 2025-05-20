@@ -158,9 +158,19 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 			acc.GetBalance()
 		}
 
+		var amount string
+		switch update.CallbackQuery.Data {
+		case "button_1":
+			amount = "3.0"
+		case "button_2":
+			amount = "36.0"
+		case "button_3":
+			amount = "108.0"
+		}
+
 		resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
 			"ADDRESS": {os.Getenv("TON_WALLET")},
-			"AMOUNT":  {update.CallbackQuery.Data}},
+			"AMOUNT":  {amount}},
 			nil,
 		)
 		if err != nil {
@@ -174,9 +184,9 @@ func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "Monthly", CallbackData: "9"},
-				{Text: "Half-year", CallbackData: "36"},
-				{Text: "Yearly", CallbackData: "108"},
+				{Text: "Monthly", CallbackData: "button_1"},
+				{Text: "Half-year", CallbackData: "button_2"},
+				{Text: "Yearly", CallbackData: "button_3"},
 			},
 		},
 	}
