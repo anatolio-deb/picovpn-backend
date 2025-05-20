@@ -14,6 +14,7 @@ type User struct {
 	ChatID  int64
 	Name    string
 	Account string
+	Wallet  string
 }
 
 type PlanType int
