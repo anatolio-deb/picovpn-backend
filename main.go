@@ -140,6 +140,62 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 		ShowAlert:       false,
 	})
 
+	// useradd or get existing; set new expire date from amount
+	user, err := UserGetByTelegramID(update.Message.From.ID)
+	if err != nil {
+		logrus.Error(err)
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:    update.Message.Chat.ID,
+			Text:      "Use /link to connect your TON wallet",
+			ParseMode: models.ParseModeMarkdown,
+		})
+		if err != nil {
+			logrus.Error(err)
+		}
+	} else {
+		client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
+		if err != nil {
+			logrus.Error(err)
+		} else {
+			addr, err := client.AddressParse(ctx, tonapi.AddressParseParams{
+				AccountID: user.Wallet,
+			})
+			if err != nil {
+				logrus.Error(err)
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID:    update.Message.Chat.ID,
+					Text:      "Something went wrong 😟",
+					ParseMode: models.ParseModeMarkdown,
+				})
+				if err != nil {
+					logrus.Error(err)
+				}
+			}
+
+			result := DB.Model(&user).Update("wallet", addr.GetRawForm())
+			if result.Error != nil {
+				logrus.Error(result.Error)
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID:    update.Message.Chat.ID,
+					Text:      "Something went wrong 😟",
+					ParseMode: models.ParseModeMarkdown,
+				})
+				if err != nil {
+					logrus.Error(result.Error)
+				}
+			} else {
+				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID:    update.Message.Chat.ID,
+					Text:      "Wallet is linked ✅",
+					ParseMode: models.ParseModeMarkdown,
+				})
+				if err != nil {
+					logrus.Error(result.Error)
+				}
+			}
+		}
+	}
+
 	client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
 	if err != nil {
 		log.Fatal(err)
