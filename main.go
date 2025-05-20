@@ -177,9 +177,9 @@ func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
 		Text: `Available plans:
-		- 1 Month (9 💎)
-		- 6 Month (36 💎)
-		- 1 Year (108 💎)`,
+		💎 1 Month -   9 TON
+		💎 6 Month -  36 TON 
+		💎 1 Year  - 108 TON`,
 		ReplyMarkup: kb,
 	})
 }
