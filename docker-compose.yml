@@ -12,6 +12,8 @@ services:
     environment:
       - TOKEN=7602027535:AAGrPptEC__CbwGqT-6vFpc-SdnEBAAtiSY
       - POSTGRES_PASSWORD=njVys55V4r2U
+      - TON_API_KEY=AH3ILIWOCWBB4SYAAAABBSD5COBSISAGV4HXAT4222X3CUF7RN3PNQBG4QF4UFZ56CFFD3A
+      - TON_WALLET=UQCfkeI1uFsuDgW5j7WNwbtQwSqCe4C1_FCJNbfbo8ifF3xF
     volumes:
       - .:/code
       - /etc/letsencrypt/live/picovpn.ru/fullchain.pem:/etc/letsencrypt/live/picovpn.ru/fullchain.pem

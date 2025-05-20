@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -13,7 +15,9 @@ import (
 	"github.com/go-telegram/bot/models"
 	"github.com/sethvargo/go-password/password"
 	"github.com/sirupsen/logrus"
+	"github.com/tonkeeper/tonapi-go"
 	"github.com/xssnick/tonutils-go/address"
+	// "github.com/xssnick/tonutils-go/liteclient"
 )
 
 // Send any text message to the bot after the bot has been started
@@ -157,19 +161,48 @@ func buyCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 		ShowAlert:       false,
 	})
 
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.CallbackQuery.Message.Message.Chat.ID,
-		Text:   "You selected the button: " + update.CallbackQuery.Data,
-	})
+	_, err := UserGetByTelegramID(update.Message.From.ID)
+	if err != nil {
+		// TODO: useradd
+		logrus.Error(err)
+	} else {
+		client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
+		if err != nil {
+			log.Fatal(err)
+		}
+		acc, err := client.GetAccount(ctx, tonapi.GetAccountParams{
+			AccountID: update.Message.Text,
+		})
+		if err != nil {
+			logrus.Error(err)
+		} else {
+			acc.GetBalance()
+		}
+
+		resp, err := client.Request(ctx, http.MethodGet, "transfer", map[string][]string{
+			"ADDRESS": {os.Getenv("TON_WALLET")},
+			"AMOUNT":  {update.CallbackQuery.Data}},
+			nil,
+		)
+		if err != nil {
+			logrus.Error(err)
+		}
+		logrus.Debugln(resp)
+	}
 }
+
+// b.SendMessage(ctx, &bot.SendMessageParams{
+// 	ChatID: update.CallbackQuery.Message.Message.Chat.ID,
+// 	Text:   "You selected the button: " + update.CallbackQuery.Data,
+// })
 
 func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "Monthly", CallbackData: "button_1"},
-				{Text: "Half-year", CallbackData: "button_2"},
-				{Text: "Yearly", CallbackData: "button_3"},
+				{Text: "Monthly", CallbackData: "9"},
+				{Text: "Half-year", CallbackData: "36"},
+				{Text: "Yearly", CallbackData: "108"},
 			},
 		},
 	}
