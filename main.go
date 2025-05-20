@@ -167,16 +167,19 @@ func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	kb := &models.InlineKeyboardMarkup{
 		InlineKeyboard: [][]models.InlineKeyboardButton{
 			{
-				{Text: "1 Month (9 💎)", CallbackData: "button_1"},
-				{Text: "6 Month (36 💎)", CallbackData: "button_2"},
-				{Text: "1 Year (108 💎)", CallbackData: "button_3"},
+				{Text: "Monthly", CallbackData: "button_1"},
+				{Text: "Half-year", CallbackData: "button_2"},
+				{Text: "Yearly", CallbackData: "button_3"},
 			},
 		},
 	}
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID:      update.Message.Chat.ID,
-		Text:        "Choose the plan",
+		ChatID: update.Message.Chat.ID,
+		Text: `Available plans:
+		- 1 Month (9 💎)
+		- 6 Month (36 💎)
+		- 1 Year (108 💎)`,
 		ReplyMarkup: kb,
 	})
 }
