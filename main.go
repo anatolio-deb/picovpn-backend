@@ -16,8 +16,6 @@ import (
 	"github.com/sethvargo/go-password/password"
 	"github.com/sirupsen/logrus"
 	"github.com/tonkeeper/tonapi-go"
-	"github.com/xssnick/tonutils-go/address"
-	// "github.com/xssnick/tonutils-go/liteclient"
 )
 
 // Send any text message to the bot after the bot has been started
@@ -218,35 +216,43 @@ func buyHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 }
 
 func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	addr, err := address.ParseAddr(update.Message.Text)
+	// addr, err := address.ParseAddr()
+
+	client, err := tonapi.NewClient(tonapi.TestnetTonApiURL, tonapi.WithToken(os.Getenv("TON_API_TOKEN")))
 	if err != nil {
 		logrus.Error(err)
 	} else {
-		user, err := UserGetByTelegramID(update.Message.From.ID)
+		addr, err := client.AddressParse(ctx, tonapi.AddressParseParams{
+			AccountID: update.Message.Text,
+		})
 		if err != nil {
 			logrus.Error(err)
 		} else {
-			user.Wallet = addr.String()
-			result := DB.Model(&user).Update("wallet", addr.String())
-			if result.Error != nil {
-				logrus.Error(result.Error)
-				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID:    update.Message.Chat.ID,
-					Text:      "Something went wrong 😟",
-					ParseMode: models.ParseModeMarkdown,
-				})
-				if err != nil {
-					logrus.Error(result.Error)
-				}
+			user, err := UserGetByTelegramID(update.Message.From.ID)
+			if err != nil {
+				logrus.Error(err)
 			} else {
-				logrus.Error(result.Error)
-				_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID:    update.Message.Chat.ID,
-					Text:      "Wallet is linked ✅",
-					ParseMode: models.ParseModeMarkdown,
-				})
-				if err != nil {
+				result := DB.Model(&user).Update("wallet", addr.GetRawForm())
+				if result.Error != nil {
 					logrus.Error(result.Error)
+					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+						ChatID:    update.Message.Chat.ID,
+						Text:      "Something went wrong 😟",
+						ParseMode: models.ParseModeMarkdown,
+					})
+					if err != nil {
+						logrus.Error(result.Error)
+					}
+				} else {
+					logrus.Error(result.Error)
+					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+						ChatID:    update.Message.Chat.ID,
+						Text:      "Wallet is linked ✅",
+						ParseMode: models.ParseModeMarkdown,
+					})
+					if err != nil {
+						logrus.Error(result.Error)
+					}
 				}
 			}
 		}
