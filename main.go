@@ -54,7 +54,7 @@ func main() {
 }
 
 func walletLinkHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	_, err := UserGetByTelegramID(update.Message.From.ID)
+	user, err := UserGetByTelegramID(update.Message.From.ID)
 	if err != nil {
 		passwd, err := password.Generate(8, 4, 0, true, true)
 		if err != nil {
@@ -118,7 +118,7 @@ func walletLinkHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 								ParseMode: models.ParseModeMarkdown,
 							})
 							if err != nil {
-								logrus.Error(result.Error)
+								logrus.Error(err)
 							}
 						} else {
 							logrus.Infof("created new user ID %d", user.ID)
@@ -127,14 +127,24 @@ func walletLinkHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				}
 			}
 		}
-	}
-	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID:    update.Message.Chat.ID,
-		Text:      "Send me your TON wallet to link it to your account",
-		ParseMode: models.ParseModeMarkdown,
-	})
-	if err != nil {
-		logrus.Error(err)
+	} else if user.Wallet != "" {
+		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:    update.Message.Chat.ID,
+			Text:      "Wallet is linked ✅",
+			ParseMode: models.ParseModeMarkdown,
+		})
+		if err != nil {
+			logrus.Error(err)
+		}
+	} else {
+		_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID:    update.Message.Chat.ID,
+			Text:      "Send me your TON wallet to link it to your account",
+			ParseMode: models.ParseModeMarkdown,
+		})
+		if err != nil {
+			logrus.Error(err)
+		}
 	}
 }
 
@@ -344,7 +354,7 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						ParseMode: models.ParseModeMarkdown,
 					})
 					if err != nil {
-						logrus.Error(result.Error)
+						logrus.Error(err)
 					}
 				} else {
 					_, err := b.SendMessage(ctx, &bot.SendMessageParams{
@@ -353,7 +363,7 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						ParseMode: models.ParseModeMarkdown,
 					})
 					if err != nil {
-						logrus.Error(result.Error)
+						logrus.Error(err)
 					}
 				}
 			}
@@ -429,7 +439,7 @@ func tryHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 							ParseMode: models.ParseModeMarkdown,
 						})
 						if err != nil {
-							logrus.Error(result.Error)
+							logrus.Error(err)
 						}
 					} else {
 						logrus.Infof("created new user ID %d", user.ID)
